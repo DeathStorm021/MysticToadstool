@@ -1,6 +1,7 @@
 import os
 import time
 import json
+import sys
 from hashlib import sha256
 
 import requests
@@ -9,7 +10,6 @@ from dateutil import parser
 host = "https://www.universal-cdn.com"
 
 # Retrieve the email and password from GitHub Actions secrets
-hanime_email = os.environ.get('HANIME_EMAIL')
 hanime_password = os.environ.get('HANIME_PASSWORD')
 
 def getSHA256(to_hash):
@@ -36,7 +36,7 @@ def login(s: requests.Session, email, password):
                       data=f'{{"burger":"{email}","fries":"{password}"}}')
 
     if '{"errors":["Unauthorized"]}' in response.text:
-        raise SystemExit("[!!!] Login failed, please check your credentials.")
+        raise SystemExit(f"[!!!] Login failed for {email}, please check your credentials.")
 
     return getInfo(response.text)
 
@@ -86,23 +86,30 @@ def getCoins(s: requests.Session, version, uid):
 def main():
     s = requests.Session()
 
-    info = login(s, hanime_email, hanime_password)
+    # Get the list of emails from the HANIME_EMAILS secret
+    hanime_emails = os.environ.get('HANIME_EMAILS', '').split(',')
 
-    s.headers.update({"X-Session-Token": info["session_token"]})
+    for email in hanime_emails:
+        info = login(s, email, hanime_password)
 
-    print(f"[*] Logged in as {info['name']}")
-    print(f"[*] Coins count: {info['coins']}")
+        s.headers.update({"X-Session-Token": info["session_token"]})
 
-    if info['last_clicked'] is not None:
-        print(f"[*] Last clicked on {parser.parse(info['last_clicked']).ctime()} UTC")
+        print(f"[*] Logged in as {info['name']} ({email})")
+        print(f"[*] Coins count: {info['coins']}")
+        print(f"[*] Version: {info['version']}")  # Print the version
 
-        previous_time = parser.parse(info["last_clicked"]).timestamp()
-        if time.time() - previous_time < 3 * 3600:
-            raise SystemExit("[!!!] You've already clicked on an ad less than 3 hours ago.")
-    else:
-        print(f"[*] Never clicked on an ad")
+        if info['last_clicked'] is not None:
+            print(f"[*] Last clicked on {parser.parse(info['last_clicked']).ctime()} UTC")
 
-    getCoins(s, info["version"], info["uid"])
+            previous_time = parser.parse(info["last_clicked"]).timestamp()
+            if time.time() - previous_time < 3 * 3600:
+                print("[*] You've already clicked on an ad less than 3 hours ago.")
+                continue  # Skip to the next email
+
+        else:
+            print(f"[*] Never clicked on an ad")
+
+        getCoins(s, info["version"], info["uid"])
 
 if __name__ == "__main__":
     main()
