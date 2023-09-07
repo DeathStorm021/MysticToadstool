@@ -1,8 +1,9 @@
 #!/bin/bash
 
 host="https://www.universal-cdn.com"
-hanime_email="$EMAIL"
-hanime_password="$PASSWORD"
+hanime_email=${EMAIL:-"$1"}
+hanime_password=${PASSWORD:-"$2"}
+
 
 getSHA256() {
     to_hash="$1"
