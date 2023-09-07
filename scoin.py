@@ -94,7 +94,7 @@ def main():
 
         s.headers.update({"X-Session-Token": info["session_token"]})
 
-        print(f"[*] Logged in as {info['name']} ({email})")
+        print(f"[*] Logged in as {info['name']} ")
         print(f"[*] Coins count: {info['coins']}")
         print(f"[*] Version: {info['version']}")  # Print the version
 
