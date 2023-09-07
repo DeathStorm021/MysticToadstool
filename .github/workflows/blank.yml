@@ -1,0 +1,27 @@
+name: Collect HTV coins
+on:
+    schedule:
+      - cron: "1 */1 * * *"
+    workflow_dispatch:
+
+env:
+  EMAIL: "${{ secrets.EMAIL }}"
+  PASSWORD: "${{ secrets.PASSWORD }}"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+       - uses: actions/checkout@v3
+         with:
+            ref: ${{ github.ref }}
+   
+       - name: Install Dependencies
+         run: |
+           sudo apt upgrade && sudo apt update
+           sudo apt install curl openssl jq
+       - name: Collect Coins
+         timeout-minutes: 1
+         run: |
+           chmod +x scoin.sh
+           ./scoin.sh
