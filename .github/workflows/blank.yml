@@ -27,4 +27,4 @@ jobs:
           HANIME_EMAIL: ${{ secrets.EMAIL }}
           HANIME_PASSWORD: ${{ secrets.PASSWORD }}
         run: |
-          python your_script.py
+          python scoin.py
