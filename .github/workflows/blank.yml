@@ -4,24 +4,27 @@ on:
       - cron: "1 */1 * * *"
     workflow_dispatch:
 
-env:
-  EMAIL: "${{ secrets.EMAIL }}"
-  PASSWORD: "${{ secrets.PASSWORD }}"
-
 jobs:
-  build:
+  run-script:
     runs-on: ubuntu-latest
+
     steps:
-       - uses: actions/checkout@v3
-         with:
-            ref: ${{ github.ref }}
-   
-       - name: Install Dependencies
-         run: |
-           sudo apt upgrade && sudo apt update
-           sudo apt install curl openssl jq
-       - name: Collect Coins
-         timeout-minutes: 1
-         run: |
-           chmod +x scoin.sh
-           ./scoin.sh
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.x  
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests python-dotenv python-dateutil
+
+      - name: Run Hanime script
+        env:
+          HANIME_EMAIL: ${{ secrets.EMAIL }}
+          HANIME_PASSWORD: ${{ secrets.PASSWORD }}
+        run: |
+          python your_script.py
