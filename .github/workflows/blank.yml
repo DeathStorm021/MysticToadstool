@@ -22,7 +22,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install requests python-dotenv python-dateutil
 
-      - name: Run Hanime script
+      - name: Run script
         env:
           HANIME_EMAILS: ${{ secrets.EMAIL }}
           HANIME_PASSWORD: ${{ secrets.PASSWORD }}
