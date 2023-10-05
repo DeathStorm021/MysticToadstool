@@ -9,8 +9,6 @@ from dateutil import parser
 
 host = "https://www.universal-cdn.com"
 
-# Retrieve the email and password from GitHub Actions secrets
-hanime_password = os.environ.get('HANIME_PASSWORD')
 
 def getSHA256(to_hash):
     """Get SHA256 hash."""
@@ -88,7 +86,7 @@ def main():
 
     # Get the list of emails and passwords from GitHub secrets
     hanime_emails = os.environ.get('HANIME_EMAILS', '').split(',')
-    hanime_passwords = os.environ.get('HANIME_PASSWORDS', '').split(',')
+    hanime_passwords = os.environ.get('HANIME_PASSWORD', '').split(',')
 
     # Ensure the number of emails matches the number of passwords
     if len(hanime_emails) != len(hanime_passwords):
