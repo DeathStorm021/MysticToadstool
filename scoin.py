@@ -86,17 +86,22 @@ def getCoins(s: requests.Session, version, uid):
 def main():
     s = requests.Session()
 
-    # Get the list of emails from the HANIME_EMAILS secret
+    # Get the list of emails and passwords from GitHub secrets
     hanime_emails = os.environ.get('HANIME_EMAILS', '').split(',')
+    hanime_passwords = os.environ.get('HANIME_PASSWORDS', '').split(',')
 
-    for email in hanime_emails:
-        info = login(s, email, hanime_password)
+    # Ensure the number of emails matches the number of passwords
+    if len(hanime_emails) != len(hanime_passwords):
+        raise ValueError("Number of emails does not match number of passwords")
+
+    for email, password in zip(hanime_emails, hanime_passwords):
+        info = login(s, email, password)
 
         s.headers.update({"X-Session-Token": info["session_token"]})
 
         print(f"[*] Logged in as {info['name']} ")
         print(f"[*] Coins count: {info['coins']}")
-        print(f"[*] Version: {info['version']}")  # Print the version
+        print(f"[*] Version: {info['version']}") 
 
         if info['last_clicked'] is not None:
             print(f"[*] Last clicked on {parser.parse(info['last_clicked']).ctime()} UTC")
@@ -110,6 +115,7 @@ def main():
             print(f"[*] Never clicked on an ad")
 
         getCoins(s, info["version"], info["uid"])
+
 
 if __name__ == "__main__":
     main()
