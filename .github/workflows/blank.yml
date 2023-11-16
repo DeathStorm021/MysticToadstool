@@ -28,3 +28,6 @@ jobs:
           HANIME_PASSWORD: ${{ secrets.PASSWORD }}
         run: |
           python scoin.py
+      - name: Keepalive Workflow
+        uses: gautamkrishnar/keepalive-workflow@1.1.0
+            
