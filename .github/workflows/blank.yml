@@ -26,6 +26,7 @@ jobs:
         env:
           HANIME_EMAILS: ${{ secrets.EMAIL }}
           HANIME_PASSWORD: ${{ secrets.PASSWORD }}
+          WEBHOOK: ${{ secrets.WEBHOOKURL }}
         run: |
           python scoin.py
       - name: Keepalive Workflow
