@@ -3,6 +3,7 @@ import time
 import json
 import sys
 from hashlib import sha256
+from datetime import datetime, timedelta
 
 import requests
 from dateutil import parser
@@ -81,6 +82,17 @@ def getCoins(s: requests.Session, version, uid):
         raise SystemExit("[!!!] Something went wrong, please report the issue on GitHub")
     print(f"You received {json.loads(response.text)['rewarded_amount']} coins.")
 
+def send_to_discord_webhook(info):
+    webhook_url = os.environ.get('WEBHOOK')
+
+    # Prepare the data to be sent to the Discord webhook
+    data = {
+        "content": f"Coins Info:\nName: {info['name']}\nCoins: {info['coins']}"
+    }
+
+    # Send the data to the Discord webhook
+    response = requests.post(webhook_url, json=data)
+
 def main():
     s = requests.Session()
 
@@ -111,7 +123,12 @@ def main():
 
         else:
             print(f"[*] Never clicked on an ad")
+        current_day = datetime.utcnow().weekday()  # 0 is Monday, 1 is Tuesday, and so on
+        current_time = datetime.utcnow().time()
 
+        if current_day == 0 and current_time >= datetime.strptime("01:00", "%H:%M").time() and current_time <= datetime.strptime("04:00", "%H:%M").time():
+        # Send the list of info['name'] and info['coins'] to Discord webhook
+            send_to_discord_webhook(info)
         getCoins(s, info["version"], info["uid"])
 
 
