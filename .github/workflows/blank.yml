@@ -24,8 +24,8 @@ jobs:
 
       - name: Run script
         env:
-          HANIME_EMAILS: ${{ secrets.EMAIL }}
-          HANIME_PASSWORD: ${{ secrets.PASSWORD }}
+          EMAILS: ${{ secrets.EMAIL }}
+          PASSWORD: ${{ secrets.PASSWORD }}
           WEBHOOK: ${{ secrets.WEBHOOKURL }}
         run: |
           python scoin.py
