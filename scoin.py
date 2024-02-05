@@ -18,17 +18,13 @@ def getSHA256(to_hash):
     return m.hexdigest()
 
 def getXHeaders():
-    """
-    These Xheaders were mainly used to authenticate whether the requests were coming from the actual hanime app and not a script like this one.
-    The authentication wasn't that secure tho and reverse engineering it wasn't that difficult.
-    """
     XClaim = str(int(time.time()))
     XSig = getSHA256(f"9944822{XClaim}8{XClaim}113")
     headers = {"X-Signature-Version": "app2", "X-Claim": XClaim, "X-Signature": XSig}
     return headers
 
 def login(s: requests.Session, email, password):
-    """Login into your hanime account."""
+    """Login into your account."""
     s.headers.update(getXHeaders())
     response = s.post(f"{host}/rapi/v4/sessions",
                       headers={"Content-Type": "application/json;charset=utf-8"},
@@ -65,10 +61,7 @@ def getInfo(response):
     return ret
 
 def getCoins(s: requests.Session, version, uid):
-    """
-    Send a request to claim your coins, this request is forged and we are not actually clicking the ad.
-    Again, reverse engineering the mechanism of generating the reward token wasn't much obfuscated.
-    """
+    
     s.headers.update(getXHeaders())
 
     curr_time = str(int(time.time()))
@@ -97,14 +90,14 @@ def main():
     s = requests.Session()
 
     # Get the list of emails and passwords from GitHub secrets
-    hanime_emails = os.environ.get('HANIME_EMAILS', '').split(',')
-    hanime_passwords = os.environ.get('HANIME_PASSWORD', '').split(',')
+    emails = os.environ.get('EMAILS', '').split(',')
+    passwords = os.environ.get('PASSWORD', '').split(',')
 
     # Ensure the number of emails matches the number of passwords
-    if len(hanime_emails) != len(hanime_passwords):
+    if len(emails) != len(passwords):
         raise ValueError("Number of emails does not match number of passwords")
 
-    for email, password in zip(hanime_emails, hanime_passwords):
+    for email, password in zip(emails, passwords):
         info = login(s, email, password)
 
         s.headers.update({"X-Session-Token": info["session_token"]})
