@@ -44,7 +44,7 @@ def getInfo(response):
         "uid": received["user"]["id"],
         "name": received["user"]["name"],
         "coins": received["user"]["coins"],
-        "version": "3.7.1"
+        "version": "3.7.1",
         "last_clicked": received["user"]["last_rewarded_ad_clicked_at"]
     }
 
