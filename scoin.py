@@ -44,19 +44,20 @@ def getInfo(response):
         "uid": received["user"]["id"],
         "name": received["user"]["name"],
         "coins": received["user"]["coins"],
+        "version": "3.7.1"
         "last_clicked": received["user"]["last_rewarded_ad_clicked_at"]
     }
 
-    available_keys = list(received["env"]["mobile_apps"].keys())
+    # available_keys = list(received["env"]["mobile_apps"].keys())
 
-    if "_build_number" in available_keys:
-        ret["version"] = received["env"]["mobile_apps"]["_build_number"]
-    elif "osts_build_number" in available_keys:
-        ret["version"] = received["env"]["mobile_apps"]["osts_build_number"]
-    elif "severilous_build_number" in available_keys:
-        ret["version"] = received["env"]["mobile_apps"]["severilous_build_number"]
-    else:
-        raise SystemExit("[!!!] Unable to find the build number for the latest mobile app, please report an issue on GitHub.")
+    # if "_build_number" in available_keys:
+    #     ret["version"] = received["env"]["mobile_apps"]["_build_number"]
+    # elif "osts_build_number" in available_keys:
+    #     ret["version"] = received["env"]["mobile_apps"]["osts_build_number"]
+    # elif "severilous_build_number" in available_keys:
+    #     ret["version"] = received["env"]["mobile_apps"]["severilous_build_number"]
+    # else:
+    #     raise SystemExit("[!!!] Unable to find the build number for the latest mobile app, please report an issue on GitHub.")
 
     return ret
 
